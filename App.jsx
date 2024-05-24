@@ -1,17 +1,31 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Routes, Route } from 'react-router-dom';
+import Header from './components/Header';
+import ProductList from './components/ProductList';
+import ProductDetail from './components/ProductDetail';
+import Footer from './components/Footer';
+import './App.css';
 
 const App = () => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [products, setProducts] = useState([]);
 
-  const handleButtonClick = () => {
-    setIsDarkMode(!isDarkMode);
-  };
+  useEffect(() => {
+    axios.get('https://fakestoreapi.com/products')
+      .then(response => setProducts(response.data))
+      .catch(error => console.error('Error fetching products:', error));
+  }, []);
 
   return (
-    <div style={{ backgroundColor: isDarkMode ? 'black' : 'white', height: '100vh',width: '100vw', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      <button onClick={handleButtonClick} style={{ color: isDarkMode ? 'white' : 'black', backgroundColor: 'transparent',border: isDarkMode ? '2px solid white' : '2px solid black' }}>
-        {isDarkMode ? 'White' : 'Dark'}
-      </button>
+    <div className="app">
+      <Header />
+      <main>
+        <Routes>
+          <Route path="/" element={<ProductList products={products} />} />
+          <Route path="/product/:productId" element={<ProductDetail />} />
+        </Routes>
+      </main>
+      <Footer />
     </div>
   );
 };
